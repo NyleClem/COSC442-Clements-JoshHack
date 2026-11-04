@@ -29,3 +29,10 @@ jobs:
 
       - name: Run PIT mutation testing
         run: ./mvnw test-compile org.pitest:pitest-maven:mutationCoverage
+
+      - name: Upload PIT report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joshhack-pit-report
+          path: target/pit-reports/
