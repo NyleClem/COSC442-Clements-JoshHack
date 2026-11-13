@@ -58,4 +58,17 @@ public class EXAMCreatureTest {
         assertEquals(expectedHp, creature.hp());
         assertEquals("stab wound", creature.causeOfDeath());
     }
+    @Test
+void testDeadCreatureRemovedFromWorld() {
+    // Arrange
+    new CreatureAi(creature);
+    world.add(creature);
+    int amount = -101;
+
+    // Act
+    creature.modifyHp(amount, "stab wound");
+
+    // Assert
+    assertNull(world.creature(1, 1, 0));
+}
 }
