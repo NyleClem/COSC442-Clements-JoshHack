@@ -38,6 +38,9 @@ public class Inventory {
 	}
 	
 	public boolean contains(Item item) {
+		if (item == null)
+			return false;
+
 		for (Item i : items){
 			if (i == item)
 				return true;

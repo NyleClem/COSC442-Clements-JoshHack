@@ -310,47 +310,50 @@ class InventoryTest {
     }
 
     @Nested
-    @DisplayName("Null Parameter Edge Cases and Implementation Flaws")
+    @DisplayName("Null Item Handling")
     class NullHandlingEdgeCases {
 
         @Test
-        @DisplayName("contains(null) returns true when empty slots exist (Defect: null == null)")
-        void testContainsNullDefectWhenEmptySlotsExist() {
+        @DisplayName("contains(null) is false for empty, partially filled, full, and zero-capacity inventories")
+        void testContainsNullIsAlwaysFalse() {
+            Inventory emptyInv = new Inventory(2);
+            assertFalse(emptyInv.contains(null));
+
             Inventory inv = new Inventory(2);
             inv.add(potion);
-
-            // Slot 1 is null; contains checks `i == null`, evaluating to true
-            assertTrue(inv.contains(null), "contains(null) unexpectedly returns true if any slot is empty");
+            assertFalse(inv.contains(null));
 
             inv.add(dagger);
-            // Now slots 0 and 1 are non-null
-            assertFalse(inv.contains(null), "contains(null) returns false when completely full");
+            assertFalse(inv.contains(null));
+
+            Inventory zeroInv = new Inventory(0);
+            assertFalse(zeroInv.contains(null));
         }
 
         @Test
-        @DisplayName("remove(null) prematurely exits after matching the first null slot")
-        void testRemoveNullDefect() {
+        @DisplayName("remove(null) remains a no-op")
+        void testRemoveNullIsNoOp() {
             Inventory inv = new Inventory(2);
             inv.add(potion);
 
-            // Slot 1 is already null. Calling remove(null) matches items[1] == null and returns
             assertDoesNotThrow(() -> inv.remove(null));
             assertSame(potion, inv.get(0));
             assertNull(inv.get(1));
+            assertFalse(inv.isFull());
         }
 
         @Test
-        @DisplayName("add(null) consumes an empty slot by writing null to it")
-        void testAddNullSlotConsumption() {
+        @DisplayName("add(null) remains a no-op")
+        void testAddNullIsNoOp() {
             Inventory inv = new Inventory(2);
 
-            // Adding null matches items[0] == null and assigns items[0] = null
             inv.add(null);
             assertNull(inv.get(0));
+            assertFalse(inv.isFull());
 
-            // A subsequent add still fills slot 0 because it remains null
             inv.add(potion);
             assertSame(potion, inv.get(0));
+            assertNull(inv.get(1));
         }
     }
 }
