@@ -294,18 +294,25 @@ class InventoryTest {
         }
 
         @Test
-        @DisplayName("getItems() leaks internal backing array allowing external tampering")
-        void testGetItemsExposureLeak() {
+        @DisplayName("getItems() returns a defensive copy")
+        void testGetItemsReturnsDefensiveCopy() {
             Inventory inv = new Inventory(5);
-            Item[] rawArray = inv.getItems();
+            inv.add(potion);
+            Item[] items = inv.getItems();
 
-            assertNotNull(rawArray);
-            assertEquals(5, rawArray.length);
+            assertNotNull(items);
+            assertEquals(5, items.length);
+            assertSame(potion, items[0]);
 
-            // Simulating an external system (e.g., Creature death-drop) modifying the array directly
-            rawArray[0] = armor;
-            assertSame(armor, inv.get(0));
-            assertTrue(inv.contains(armor));
+            items[0] = armor;
+            items[1] = dagger;
+
+            assertSame(potion, inv.get(0));
+            assertNull(inv.get(1));
+            assertTrue(inv.contains(potion));
+            assertFalse(inv.contains(armor));
+            assertFalse(inv.contains(dagger));
+            assertNotSame(items, inv.getItems());
         }
     }
 

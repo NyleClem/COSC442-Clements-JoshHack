@@ -2,6 +2,7 @@
 package game;
 
 import java.awt.Color;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,5 +80,46 @@ void testDeadCreatureRemovedFromWorld() {
         creature.meleeAttack(defender);
 
         assertEquals(49, defender.hp());
+    }
+
+    @Test
+    void testEffectsViewIsUnmodifiableAndReflectsInternalUpdates() {
+        new CreatureAi(creature);
+        List<Effect> effects = creature.effects();
+        Effect effect = new Effect(2);
+        Item potion = new Item('!', Color.RED, "potion", null);
+        potion.setQuaffEffect(effect);
+
+        creature.quaff(potion);
+
+        assertEquals(1, effects.size());
+        assertSame(effect, effects.get(0));
+        assertThrows(UnsupportedOperationException.class, () -> effects.add(new Effect(1)));
+        assertEquals(1, creature.effects().size());
+    }
+
+    @Test
+    void testDeathDropsAllInventoryItemsWhenIteratingOverDefensiveCopy() {
+        new CreatureAi(creature);
+        world.add(creature);
+        Item firstItem = new Item('!', Color.RED, "first potion", null);
+        Item secondItem = new Item('!', Color.BLUE, "second potion", null);
+        creature.inventory().add(firstItem);
+        creature.inventory().add(secondItem);
+
+        creature.modifyHp(-101, "test death");
+
+        assertNull(creature.inventory().get(0));
+        assertNull(creature.inventory().get(1));
+
+        int droppedItems = 0;
+        for (int x = 0; x < world.width(); x++) {
+            for (int y = 0; y < world.height(); y++) {
+                Item item = world.item(x, y, 0);
+                if (item == firstItem || item == secondItem)
+                    droppedItems++;
+            }
+        }
+        assertEquals(2, droppedItems);
     }
 }
