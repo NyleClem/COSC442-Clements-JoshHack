@@ -44,6 +44,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.6.0</version>
             </plugin>
+
             <plugin>
     <groupId>org.pitest</groupId>
     <artifactId>pitest-maven</artifactId>
@@ -68,6 +69,17 @@
         </outputFormats>
     </configuration>
 </plugin>
+
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.10.5.0</version>
+                <configuration>
+                    <sarifOutput>true</sarifOutput>
+                    <sarifOutputDirectory>${project.build.directory}</sarifOutputDirectory>
+                    <sarifOutputFilename>spotbugs.sarif</sarifOutputFilename>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

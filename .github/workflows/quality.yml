@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
 
     steps:
       - name: Check out repository
@@ -29,6 +32,15 @@ jobs:
 
       - name: Run PIT mutation testing
         run: ./mvnw test-compile org.pitest:pitest-maven:mutationCoverage
+
+      - name: Run SpotBugs and generate SARIF
+        run: ./mvnw com.github.spotbugs:spotbugs-maven-plugin:4.10.5.0:spotbugs
+
+      - name: Upload SpotBugs SARIF to GitHub Code Scanning
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: target/spotbugs.sarif
 
       - name: Upload PIT report
         if: always()
