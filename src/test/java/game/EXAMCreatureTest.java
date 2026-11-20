@@ -83,6 +83,27 @@ void testDeadCreatureRemovedFromWorld() {
     }
 
     @Test
+    void testModifyManaWithinBounds() {
+        creature.modifyMana(-2);
+
+        assertEquals(3, creature.mana());
+    }
+
+    @Test
+    void testModifyManaClampsAtZero() {
+        creature.modifyMana(-6);
+
+        assertEquals(0, creature.mana());
+    }
+
+    @Test
+    void testModifyManaClampsAtMaximum() {
+        creature.modifyMana(2);
+
+        assertEquals(creature.maxMana(), creature.mana());
+    }
+
+    @Test
     void testEffectsViewIsUnmodifiableAndReflectsInternalUpdates() {
         new CreatureAi(creature);
         List<Effect> effects = creature.effects();
