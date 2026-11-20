@@ -175,9 +175,7 @@ public class Creature {
 	private void commonAttack(Creature other, int attack, String action, Object ... params) {
 		modifyFood(-2);
 		
-		int amount = Math.max(0, attack - other.defenseValue());
-		
-		amount = (int)(Math.random() * amount) + 1;
+		int amount = CombatRules.calculateAttackDamage(attack, other.defenseValue(), Math.random());
 		
 		Object[] params2 = new Object[params.length+1];
 		for (int i = 0; i < params.length; i++){

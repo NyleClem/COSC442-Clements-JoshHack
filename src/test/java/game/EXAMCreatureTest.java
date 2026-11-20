@@ -71,4 +71,13 @@ void testDeadCreatureRemovedFromWorld() {
     // Assert
     assertNull(world.creature(1, 1, 0));
 }
+
+    @Test
+    void testMeleeAttackReducesDefenderHp() {
+        Creature defender = new Creature(world, 'g', Color.GREEN, "goblin", 50, 0, 9);
+
+        creature.meleeAttack(defender);
+
+        assertEquals(49, defender.hp());
+    }
 }

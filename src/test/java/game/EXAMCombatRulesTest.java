@@ -61,4 +61,20 @@ public class EXAMCombatRulesTest {
         // Assert
         assertEquals(1, calculatedHp);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "4, 5, 0.0, 1",
+        "5, 5, 0.5, 1",
+        "6, 5, 0.999, 1",
+        "10, 5, 0.0, 1",
+        "10, 5, 0.5, 3",
+        "10, 5, 0.999, 5"
+    })
+    void testAttackDamageBoundariesAndRandomSamples(
+            int attack, int defense, double randomSample, int expectedDamage) {
+        assertEquals(
+                expectedDamage,
+                CombatRules.calculateAttackDamage(attack, defense, randomSample));
+    }
 }
