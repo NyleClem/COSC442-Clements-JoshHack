@@ -44,4 +44,18 @@ public class ItemTest {
         // Assert
         assertEquals("  ranged:1", details);
     }
+
+    @Test
+    void testDetailsWithThrownAndFoodValuesIncludesBoth() {
+        // Arrange
+        Item item = new Item('%', Color.GREEN, "Treated Ration", "a ration");
+        item.modifyThrownAttackValue(3);
+        item.modifyFoodValue(100);
+
+        // Act
+        String details = item.details();
+
+        // Assert
+        assertEquals("  thrown:4  food:100", details);
+    }
 }
